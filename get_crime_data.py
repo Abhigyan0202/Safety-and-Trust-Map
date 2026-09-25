@@ -8,19 +8,23 @@ import pandas
 
 def get_results(df,browser,substation,start_date,end_date):
     page = browser.new_page()
-    page.goto("https://citizen.mahapolice.gov.in/Citizen/MH/PublishedFIRs.aspx")
-    page.reload()
-    time.sleep(4)
-    page.locator("#ContentPlaceHolder1_ddlDistrict").select_option("BRIHAN MUMBAI CITY")
-    page.locator("#ContentPlaceHolder1_ddlPoliceStation").select_option(substation)
-    page.locator("#ContentPlaceHolder1_txtDateOfRegistrationFrom").press_sequentially(start_date)
-    page.locator("#ContentPlaceHolder1_txtDateOfRegistrationTo").press_sequentially(end_date)
-    page.click("#ContentPlaceHolder1_btnSearch")
-    time.sleep(3)
-    FIRs = page.locator("#ContentPlaceHolder1_lbltotalrecord").inner_text()
-    print(f"{substation}, {start_date}, {end_date}, {FIRs} ")
-    df.loc[len(df)] = [substation, start_date, end_date, FIRs]
-    page.close()
+    try :
+        page.goto("https://citizen.mahapolice.gov.in/Citizen/MH/PublishedFIRs.aspx")
+        page.reload()
+        time.sleep(4)
+        page.locator("#ContentPlaceHolder1_ddlDistrict").select_option("BRIHAN MUMBAI CITY")
+        page.locator("#ContentPlaceHolder1_ddlPoliceStation").select_option(substation)
+        page.locator("#ContentPlaceHolder1_txtDateOfRegistrationFrom").press_sequentially(start_date)
+        page.locator("#ContentPlaceHolder1_txtDateOfRegistrationTo").press_sequentially(end_date)
+        page.click("#ContentPlaceHolder1_btnSearch")
+        time.sleep(3)
+        FIRs = page.locator("#ContentPlaceHolder1_lbltotalrecord").inner_text()
+        print(f"{substation}, {start_date}, {end_date}, {FIRs} ")
+        df.loc[len(df)] = [substation, start_date, end_date, FIRs]
+        page.close()
+    except :
+        df.loc[len(df)] = [substation, start_date, end_date, -1] #-1 is to denote that data was not found for this entry for now
+        print(f"{substation}, {start_date}, {end_date}, {-1} ")  #Due to website not loading 
             
 def run(df,substations, start_date, end_date):
     with sync_playwright() as p:
