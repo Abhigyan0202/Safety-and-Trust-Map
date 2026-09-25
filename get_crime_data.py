@@ -18,12 +18,13 @@ def get_results(df,browser,substation,start_date,end_date):
     page.click("#ContentPlaceHolder1_btnSearch")
     time.sleep(3)
     FIRs = page.locator("#ContentPlaceHolder1_lbltotalrecord").inner_text()
+    print(f"{substation}, {start_date}, {end_date}, {FIRs} ")
     df.loc[len(df)] = [substation, start_date, end_date, FIRs]
     page.close()
             
 def run(df,substations, start_date, end_date):
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
+        browser = p.chromium.launch(headless=True)
         for s in substations:
             get_results(df,browser,s,start_date,end_date)
         browser.close()
@@ -46,10 +47,8 @@ if __name__ == "__main__":
               ["01112025","30112025"],
               ["01102025","31102025"],
               ["01092025","30092025"]]
-    for i in range(12):
-        print(months[i][0], months[i][1])
     
-    # for i in range(12):
-    #     df = pandas.DataFrame(columns=["Name", "StartDate","EndDate", "FIRs"])
-    #     run(df, substations,months[i][0],months[i][1])
-    #     df.to_csv(f"df_{months[i][0]}.csv")
+    for i in range(12):
+        df = pandas.DataFrame(columns=["Name", "StartDate","EndDate", "FIRs"])
+        run(df, substations,months[i][0],months[i][1])
+        df.to_csv(f"df_{months[i][0]}.csv")
