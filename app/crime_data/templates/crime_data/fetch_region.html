@@ -1,0 +1,24 @@
+{% extends "crime_data/home.html" %}
+{% block body %}
+    <table>
+        <thead>
+            <tr>{{region}}</tr>
+            <tr>
+                <th>Month</th>
+                <th>Year</th>
+                <th>FIRs</th>
+            </tr>
+        </thead>
+        <tbody>
+             {% for f in data %}
+             <tr>
+                <td>{{f.month}}</td>
+                <td>{{f.year}}</td>
+                <td>{{f.firs}}</td>
+             </tr>
+             {% endfor %}
+        </tbody>
+    </table>
+   
+
+{% endblock %}
