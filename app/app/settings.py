@@ -66,6 +66,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                "django.template.context_processors.debug",
             ],
         },
     },
@@ -121,6 +122,9 @@ USE_TZ = True
 
 # Static file configurations
 
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
 
@@ -129,6 +133,11 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
 
 TAILWIND_APP_NAME = "theme"
 TAILWIND_USE_STANDALONE_BINARY = True
+
+# Login redirects
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "profile"
+LOGOUT_REDIRECT_URL = "home"
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration

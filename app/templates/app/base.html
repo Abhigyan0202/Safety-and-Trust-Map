@@ -1,90 +1,80 @@
-
 {% load static tailwind_tags %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>{% block title %}Trust App{% endblock %}</title>
+    <title>{% block title %}Trust Map{% endblock %}</title>
 
     {% tailwind_css %}
 </head>
 
-<body class="min-h-screen flex flex-col bg-gray-50 text-gray-900">
+<body class="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
 
-    <!-- Navbar -->
-    <nav class="bg-white border-b border-gray-200 shadow-sm">
-        <div class="max-w-7xl mx-auto px-6 py-4
-                    flex items-center justify-between">
+    <nav class="bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="h-16 flex items-center justify-between">
 
-            <a href="/" class="text-2xl font-bold text-indigo-600">
-                SafeSpace
-            </a>
-
-            <div class="hidden md:flex items-center gap-8">
-                <a href="/" class="text-gray-600 hover:text-indigo-600">
-                    Home
-                </a>
-                <a href="/explore/" class="text-gray-600 hover:text-indigo-600">
-                    Explore
-                </a>
-                <a href="/about/" class="text-gray-600 hover:text-indigo-600">
-                    About
-                </a>
-            </div>
-
-            <div class="flex items-center gap-3">
-                {% if user.is_authenticated %}
-                    <span class="text-sm text-gray-600">
-                        Hi, {{ user.username }}
+                <a href="{% url 'home' %}"
+                   class="flex items-center gap-3 font-bold text-xl tracking-tight">
+                    <span class="flex items-center justify-center h-10 w-10 rounded-xl bg-indigo-600 text-white">
+                        ST
                     </span>
+                    <span>Safety<span class="text-indigo-600">Map</span></span>
+                </a>
 
-                    <form method="post" action="{% url 'logout' %}">
-                        {% csrf_token %}
-                        <button type="submit"
-                            class="rounded-lg bg-gray-100 px-4 py-2
-                                   hover:bg-gray-200">
-                            Logout
-                        </button>
-                    </form>
-                {% else %}
-                    <a href="{% url 'login' %}"
-                       class="px-4 py-2 text-indigo-600 hover:text-indigo-800">
-                        Login
+                <div class="flex items-center gap-3 sm:gap-6 text-sm font-medium">
+                    <a href="{% url 'home' %}"
+                       class="text-slate-600 hover:text-indigo-600">
+                        Explore Map
                     </a>
 
-                    <a href="{% url 'register' %}"
-                       class="rounded-lg bg-indigo-600 px-4 py-2
-                              font-semibold text-white hover:bg-indigo-700">
-                        Sign Up
-                    </a>
-                {% endif %}
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'profile' %}"
+                           class="text-slate-600 hover:text-indigo-600">
+                            Profile
+                        </a>
+
+                        <a href="{% url 'logout' %}"
+                          class="inline-block rounded-lg bg-slate-900 px-4 py-2 text-white hover:bg-slate-700 transition">
+                                Log out
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}"
+                           class="text-slate-600 hover:text-indigo-600">
+                            Log in
+                        </a>
+
+                        <a href="{% url 'register' %}"
+                           class="rounded-lg bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700">
+                            Create account
+                        </a>
+                    {% endif %}
+                </div>
+
             </div>
-
         </div>
     </nav>
 
-    <!-- Page Content -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-6 py-10">
-
+    <main class="flex-1">
         {% if messages %}
-            {% for message in messages %}
-                <div class="mb-4 rounded-lg bg-indigo-50 p-4 text-indigo-700">
-                    {{ message }}
-                </div>
-            {% endfor %}
+            <div class="max-w-7xl mx-auto px-4 pt-5 sm:px-6 lg:px-8">
+                {% for message in messages %}
+                    <div class="mb-3 rounded-lg border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm text-indigo-800">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
         {% endif %}
 
-        {% block content %}
-        {% endblock %}
-
+        {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t border-gray-200 bg-white">
-        <div class="max-w-7xl mx-auto px-6 py-5 text-center text-sm text-gray-500">
-            © {% now "Y" %} SafeSpace. All rights reserved.
+    <footer class="border-t border-slate-200 bg-white">
+        <div class="max-w-7xl mx-auto px-4 py-5 text-center text-sm text-slate-500">
+            {% now "Y" %} Trust Map.
+            Helping communities make informed safety decisions.
         </div>
     </footer>
 
