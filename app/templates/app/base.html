@@ -1,0 +1,92 @@
+
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Trust App{% endblock %}</title>
+
+    {% tailwind_css %}
+</head>
+
+<body class="min-h-screen flex flex-col bg-gray-50 text-gray-900">
+
+    <!-- Navbar -->
+    <nav class="bg-white border-b border-gray-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 py-4
+                    flex items-center justify-between">
+
+            <a href="/" class="text-2xl font-bold text-indigo-600">
+                SafeSpace
+            </a>
+
+            <div class="hidden md:flex items-center gap-8">
+                <a href="/" class="text-gray-600 hover:text-indigo-600">
+                    Home
+                </a>
+                <a href="/explore/" class="text-gray-600 hover:text-indigo-600">
+                    Explore
+                </a>
+                <a href="/about/" class="text-gray-600 hover:text-indigo-600">
+                    About
+                </a>
+            </div>
+
+            <div class="flex items-center gap-3">
+                {% if user.is_authenticated %}
+                    <span class="text-sm text-gray-600">
+                        Hi, {{ user.username }}
+                    </span>
+
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit"
+                            class="rounded-lg bg-gray-100 px-4 py-2
+                                   hover:bg-gray-200">
+                            Logout
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}"
+                       class="px-4 py-2 text-indigo-600 hover:text-indigo-800">
+                        Login
+                    </a>
+
+                    <a href="{% url 'register' %}"
+                       class="rounded-lg bg-indigo-600 px-4 py-2
+                              font-semibold text-white hover:bg-indigo-700">
+                        Sign Up
+                    </a>
+                {% endif %}
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-6 py-10">
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="mb-4 rounded-lg bg-indigo-50 p-4 text-indigo-700">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-200 bg-white">
+        <div class="max-w-7xl mx-auto px-6 py-5 text-center text-sm text-gray-500">
+            © {% now "Y" %} SafeSpace. All rights reserved.
+        </div>
+    </footer>
+
+</body>
+</html>
