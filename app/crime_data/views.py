@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Region_data, Region_Reviews
+
 def home(request):
     return HttpResponse("Welcome to Safety and Trust Map!")
 
@@ -15,3 +16,6 @@ def fetch_region(request):
         "data": fir_data,
         "region": region
     })
+
+def map_view(request):
+    return render(request, "crime_data/map.html")

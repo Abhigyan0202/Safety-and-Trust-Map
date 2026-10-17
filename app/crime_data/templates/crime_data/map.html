@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safety and Trust Map | Mumbai</title>
+
+    <!-- Leaflet CSS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fa;
+        }
+
+        header {
+            padding: 16px 24px;
+            background: #172554;
+            color: white;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        p {
+            margin-bottom: 0;
+        }
+
+        #map {
+            height: calc(100vh - 90px);
+            min-height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Safety and Trust Map</h1>
+        <p>Explore crime statistics across Mumbai</p>
+    </header>
+
+    <div id="map"></div>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // Center the map on Mumbai
+        const map = L.map("map").setView(
+            [19.0760, 72.8777],
+            11
+        );
+
+        // Add OpenStreetMap tiles
+        L.tileLayer(
+            "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                maxZoom: 19,
+                attribution:
+                    '&copy; <a href="https://www.openstreetmap.org/copyright">' +
+                    'OpenStreetMap</a> contributors'
+            }
+        ).addTo(map);
+    </script>
+</body>
+</html>
