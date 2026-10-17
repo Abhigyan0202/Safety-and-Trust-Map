@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Safety and Trust Map | Mumbai</title>
 
     <!-- Leaflet CSS -->
@@ -13,25 +14,31 @@
     >
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background: #f5f7fa;
+            background: #f4f6f9;
         }
 
         header {
-            padding: 16px 24px;
+            padding: 18px 24px;
             background: #172554;
             color: white;
         }
 
-        h1 {
-            margin: 0;
+        header h1 {
+            margin: 0 0 6px;
             font-size: 24px;
         }
 
-        p {
-            margin-bottom: 0;
+        header p {
+            margin: 0;
+            color: #dbeafe;
+            font-size: 14px;
         }
 
         #map {
@@ -39,8 +46,24 @@
             min-height: 400px;
             width: 100%;
         }
+
+        .popup-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .popup-info {
+            margin: 0 0 8px;
+        }
+
+        .popup-hint {
+            color: #2563eb;
+            font-size: 12px;
+        }
     </style>
 </head>
+
 <body>
     <header>
         <h1>Safety and Trust Map</h1>
@@ -52,14 +75,17 @@
     <!-- Leaflet JavaScript -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+    <!-- Django sends database records to JavaScript safely -->
+    {{ regions|json_script:"regions-data" }}
+
     <script>
-        // Center the map on Mumbai
+        // Initialize map centered on Mumbai
         const map = L.map("map").setView(
             [19.0760, 72.8777],
             11
         );
 
-        // Add OpenStreetMap tiles
+        // OpenStreetMap layer
         L.tileLayer(
             "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
             {
@@ -69,6 +95,73 @@
                     'OpenStreetMap</a> contributors'
             }
         ).addTo(map);
+
+        // Read crime records provided by Django
+        const regions = JSON.parse(
+            document.getElementById("regions-data").textContent
+        );
+
+        const bounds = [];
+
+        // Create one marker for each station
+        regions.forEach(region => {
+            const latitude = Number(region.latitude);
+            const longitude = Number(region.longitude);
+
+            // Ignore invalid coordinates
+            if (
+                !Number.isFinite(latitude) ||
+                !Number.isFinite(longitude) ||
+                latitude < -90 || latitude > 90 ||
+                longitude < -180 || longitude > 180
+            ) {
+                return;
+            }
+
+            const marker = L.marker([
+                latitude,
+                longitude
+            ]).addTo(map);
+
+            bounds.push([latitude, longitude]);
+
+            // Build popup safely
+            const popup = document.createElement("div");
+
+            const title = document.createElement("div");
+            title.className = "popup-title";
+            title.textContent = region.name;
+            popup.appendChild(title);
+
+            const details = document.createElement("p");
+            details.className = "popup-info";
+            details.textContent =
+                `${region.firs} FIRs — ${region.month} ${region.year}`;
+            popup.appendChild(details);
+
+            const hint = document.createElement("div");
+            hint.className = "popup-hint";
+            hint.textContent = "Click marker to view area details";
+            popup.appendChild(hint);
+
+            marker.bindPopup(popup);
+
+            // Redirect to your existing fetch_region endpoint
+            marker.on("click", () => {
+                window.location.href =
+                    `/fetch_region`;
+            });
+        });
+
+        // Zoom to all available stations, if any
+        if (bounds.length > 1) {
+            map.fitBounds(bounds, {
+                padding: [30, 30],
+                maxZoom: 13
+            });
+        } else if (bounds.length === 1) {
+            map.setView(bounds[0], 14);
+        }
     </script>
 </body>
 </html>

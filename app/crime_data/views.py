@@ -17,5 +17,28 @@ def fetch_region(request):
         "region": region
     })
 
+from django.shortcuts import render
+from .models import Region_data
+
 def map_view(request):
-    return render(request, "crime_data/map.html")
+    regions = list(
+        Region_data.objects
+        .filter(
+            latitude__isnull=False,
+            longitude__isnull=False,
+        )
+        .values(
+            "name",
+            "latitude",
+            "longitude",
+            "firs",
+            "month",
+            "year",
+        )
+    )
+
+    return render(
+        request,
+        "crime_data/map.html",
+        {"regions": regions},
+    )
