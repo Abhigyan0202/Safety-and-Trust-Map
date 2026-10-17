@@ -1,0 +1,85 @@
+
+{% extends "app/base.html" %}
+
+{% block title %}{{ profile_user.username }}'s Reviews | Safety & Trust Map{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+    <div class="mb-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <p class="text-sm font-medium text-slate-500">
+            Community member
+        </p>
+
+        <div class="mt-2 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h1 class="text-3xl font-bold tracking-tight text-slate-900">
+                    {{ profile_user.username }}
+                </h1>
+
+                <p class="mt-2 text-sm text-slate-600">
+                    Reviews shared with the Safety & Trust Map community.
+                </p>
+            </div>
+
+            <div class="rounded-xl bg-slate-100 px-5 py-4">
+                <p class="text-2xl font-bold text-slate-900">
+                    {{ total_reviews }}
+                </p>
+                <p class="text-sm text-slate-600">
+                    Total reviews
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-5 flex items-center justify-between">
+        <h2 class="text-xl font-semibold text-slate-900">
+            Review history
+        </h2>
+
+        <a href="{% url 'search_place_reviews' %}"
+           class="text-sm font-medium text-slate-700 underline decoration-slate-300 underline-offset-4 hover:text-slate-950">
+            Explore places
+        </a>
+    </div>
+
+    {% for review in reviews %}
+        <article class="mb-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-900">
+                        {{ review.police_station.name }}
+                    </h3>
+
+                    <p class="mt-1 text-sm text-slate-500">
+                        {{ review.created_at|date:"d M Y, g:i A" }}
+                    </p>
+                </div>
+
+                <span class="inline-flex w-fit items-center rounded-full bg-amber-50 px-3 py-1 text-sm font-semibold text-amber-800">
+                    {{ review.rating }}/5
+                </span>
+            </div>
+
+            <p class="mt-4 whitespace-pre-line break-words text-sm leading-6 text-slate-700">{{ review.review }}</p>
+
+            <div class="mt-5 border-t border-slate-100 pt-4">
+                <a href="{% url 'search_place_reviews' %}?q={{ review.police_station.name|urlencode }}"
+                   class="text-sm font-medium text-slate-700 hover:text-slate-950">
+                    See reviews for this station &rarr;
+                </a>
+            </div>
+        </article>
+    {% empty %}
+        <div class="rounded-xl border border-dashed border-slate-300 px-6 py-12 text-center">
+            <h3 class="font-semibold text-slate-900">
+                No reviews yet
+            </h3>
+
+            <p class="mt-2 text-sm text-slate-600">
+                This user hasn't shared any reviews yet.
+            </p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

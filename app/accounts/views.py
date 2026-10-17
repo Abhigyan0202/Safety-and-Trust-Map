@@ -57,10 +57,19 @@ def profile(request):
     else:
         form = ProfileForm(instance=profile)
 
+    reviews = request.user.region_reviews.select_related(
+        "police_station"
+    ).all()
+
     return render(
         request,
         "accounts/profile.html",
-        {"form": form, "profile": profile}
+        {
+            "form": form,
+            "profile": profile,
+            "reviews": reviews,
+            "total_reviews": reviews.count(),
+        }
     )
 
 @login_required
