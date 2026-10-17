@@ -75,17 +75,14 @@
     <!-- Leaflet JavaScript -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <!-- Django sends database records to JavaScript safely -->
     {{ regions|json_script:"regions-data" }}
 
     <script>
-        // Initialize map centered on Mumbai
         const map = L.map("map").setView(
             [19.0760, 72.8777],
             11
         );
 
-        // OpenStreetMap layer
         L.tileLayer(
             "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
             {
@@ -96,19 +93,16 @@
             }
         ).addTo(map);
 
-        // Read crime records provided by Django
         const regions = JSON.parse(
             document.getElementById("regions-data").textContent
         );
 
         const bounds = [];
 
-        // Create one marker for each station
         regions.forEach(region => {
             const latitude = Number(region.latitude);
             const longitude = Number(region.longitude);
 
-            // Ignore invalid coordinates
             if (
                 !Number.isFinite(latitude) ||
                 !Number.isFinite(longitude) ||
@@ -146,14 +140,12 @@
 
             marker.bindPopup(popup);
 
-            // Redirect to your existing fetch_region endpoint
             marker.on("click", () => {
                 window.location.href =
                     `/fetch_region`;
             });
         });
 
-        // Zoom to all available stations, if any
         if (bounds.length > 1) {
             map.fitBounds(bounds, {
                 padding: [30, 30],
