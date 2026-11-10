@@ -8,6 +8,7 @@ def home(request):
 def fetch_region(request):
     region = str(request.GET.get('name','POWAI')).upper()
     fir_data = Region_data.objects.filter(name=region)
+    
     print(region)
     print("----------------------------")
     print(fir_data)
@@ -15,9 +16,6 @@ def fetch_region(request):
         "data": fir_data,
         "region": region
     })
-
-from django.shortcuts import render
-from .models import Region_data
 
 def map_view(request):
     regions = list(

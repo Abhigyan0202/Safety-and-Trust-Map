@@ -78,6 +78,8 @@
     {{ regions|json_script:"regions-data" }}
 
     <script>
+        L.TileLayer.prototype.options.referrerPolicy = 'strict-origin-when-cross-origin';
+
         const map = L.map("map").setView(
             [19.0760, 72.8777],
             11
@@ -92,68 +94,44 @@
                     'OpenStreetMap</a> contributors'
             }
         ).addTo(map);
+        const geojsonUrl =
+    '/static/crime_data/mumbai_police_station_jurisdictions_matched.geojson';
 
-        const regions = JSON.parse(
-            document.getElementById("regions-data").textContent
-        );
+fetch(geojsonUrl)
+    .then(response => {
+        console.log("HTTP status:", response.status);
 
-        const bounds = [];
-
-        regions.forEach(region => {
-            const latitude = Number(region.latitude);
-            const longitude = Number(region.longitude);
-
-            if (
-                !Number.isFinite(latitude) ||
-                !Number.isFinite(longitude) ||
-                latitude < -90 || latitude > 90 ||
-                longitude < -180 || longitude > 180
-            ) {
-                return;
-            }
-
-            const marker = L.marker([
-                latitude,
-                longitude
-            ]).addTo(map);
-
-            bounds.push([latitude, longitude]);
-
-            // Build popup safely
-            const popup = document.createElement("div");
-
-            const title = document.createElement("div");
-            title.className = "popup-title";
-            title.textContent = region.name;
-            popup.appendChild(title);
-
-            const details = document.createElement("p");
-            details.className = "popup-info";
-            details.textContent =
-                `${region.firs} FIRs — ${region.month} ${region.year}`;
-            popup.appendChild(details);
-
-            const hint = document.createElement("div");
-            hint.className = "popup-hint";
-            hint.textContent = "Click marker to view area details";
-            popup.appendChild(hint);
-
-            marker.bindPopup(popup);
-
-            marker.on("click", () => {
-                window.location.href =
-                    `/fetch_region`;
-            });
-        });
-
-        if (bounds.length > 1) {
-            map.fitBounds(bounds, {
-                padding: [30, 30],
-                maxZoom: 13
-            });
-        } else if (bounds.length === 1) {
-            map.setView(bounds[0], 14);
+        if (!response.ok) {
+            throw new Error(
+                `Failed to load GeoJSON: ${response.status}`
+            );
         }
+
+        return response.json();
+    })
+    .then(data => {
+        console.log("GeoJSON loaded:", data);
+        console.log("Number of features:", data.features.length);
+
+        const stations = L.geoJSON(data, {
+            style: {
+                color: '#333333',
+                weight: 2,
+                fillColor: '#3498db',
+                fillOpacity: 0.3
+            },
+            onEachFeature: (feature, layer) => {
+                layer.bindTooltip(feature.properties.name);
+            }
+        }).addTo(map);
+
+        console.log("Layer bounds:", stations.getBounds());
+
+        map.fitBounds(stations.getBounds());
+    })
+    .catch(error => {
+        console.error("GeoJSON loading error:", error);
+    });
     </script>
 </body>
 </html>

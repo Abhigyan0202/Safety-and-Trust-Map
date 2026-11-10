@@ -10,7 +10,7 @@ class Region_Reviews(models.Model):
         on_delete=models.CASCADE,
         related_name="region_reviews"
     )
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50) #reference to name of the region
     review = models.CharField(max_length=2048)
     rating = models.IntegerField()
 
@@ -19,13 +19,6 @@ class Region_Reviews(models.Model):
 
 # Region data along with FIR's will contain mapping of reviews as well
 class Region_data(models.Model):
-    region_review = models.ForeignKey(
-        Region_Reviews,
-        on_delete=models.CASCADE,
-        related_name="region_data",
-        null=True,
-        blank=True
-    )
     name = models.CharField(max_length=50)
     firs = models.IntegerField()
     month = models.CharField(max_length=20)
