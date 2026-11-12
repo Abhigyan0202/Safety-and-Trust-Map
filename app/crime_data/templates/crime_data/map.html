@@ -47,20 +47,7 @@
             width: 100%;
         }
 
-        .popup-title {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 6px;
-        }
-
-        .popup-info {
-            margin: 0 0 8px;
-        }
-
-        .popup-hint {
-            color: #2563eb;
-            font-size: 12px;
-        }
+        
     </style>
 </head>
 
@@ -110,9 +97,7 @@ fetch(geojsonUrl)
         return response.json();
     })
     .then(data => {
-        console.log("GeoJSON loaded:", data);
-        console.log("Number of features:", data.features.length);
-
+        
         const stations = L.geoJSON(data, {
             style: {
                 color: '#333333',
@@ -121,7 +106,12 @@ fetch(geojsonUrl)
                 fillOpacity: 0.3
             },
             onEachFeature: (feature, layer) => {
-                layer.bindTooltip(feature.properties.name);
+                const regionName = feature.properties.name ;
+                layer.bindTooltip(regionName);
+                layer.on('click', (feature, layer)=> {
+                    console.log(regionName);
+                    window.open(`/fetch_region?name=${encodeURIComponent(regionName)}`, '_blank', 'noopener,noreferrer');
+                })
             }
         }).addTo(map);
 

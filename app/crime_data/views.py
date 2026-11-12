@@ -9,9 +9,9 @@ def fetch_region(request):
     region = str(request.GET.get('name','POWAI')).upper()
     fir_data = Region_data.objects.filter(name=region)
     
-    print(region)
-    print("----------------------------")
-    print(fir_data)
+    # print(region)
+    # print("----------------------------")
+    # print(fir_data)
     return render(request,"crime_data/fetch_region.html", {
         "data": fir_data,
         "region": region
