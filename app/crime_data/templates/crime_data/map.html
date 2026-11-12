@@ -83,45 +83,52 @@
         ).addTo(map);
         const geojsonUrl =
     '/static/crime_data/mumbai_police_station_jurisdictions_matched.geojson';
+    const coloursURL = "/getColours"
 
-fetch(geojsonUrl)
-    .then(response => {
-        console.log("HTTP status:", response.status);
+    const getRegionColour = async (region_name) => {
+        return "#ff3300";
+    }
 
-        if (!response.ok) {
-            throw new Error(
-                `Failed to load GeoJSON: ${response.status}`
-            );
-        }
+    Promise.all([
+    fetch('/static/crime_data/mumbai_police_station_jurisdictions_matched.geojson')
+        .then(response => response.json()),
 
-        return response.json();
-    })
-    .then(data => {
-        
-        const stations = L.geoJSON(data, {
-            style: {
+    fetch('/getColours')
+        .then(response => response.json())
+])
+.then(([geojsonData, colours]) => {
+    console.log(colours)
+    const stations = L.geoJSON(geojsonData, {
+        style: function(feature) {
+            const regionName = feature.properties.name;
+            return {
                 color: '#333333',
-                weight: 2,
-                fillColor: '#3498db',
-                fillOpacity: 0.3
-            },
-            onEachFeature: (feature, layer) => {
-                const regionName = feature.properties.name ;
-                layer.bindTooltip(regionName);
-                layer.on('click', (feature, layer)=> {
+                weight: 1,
+                fillColor: colours[regionName] || '#cccccc',
+                fillOpacity: 0.65
+            };
+        },
+
+        onEachFeature: function(feature, layer) {
+
+            const regionName = feature.properties.name;
+
+            layer.bindTooltip(regionName);
+
+            layer.on('click', (feature, layer)=> {
                     console.log(regionName);
                     window.open(`/fetch_region?name=${encodeURIComponent(regionName)}`, '_blank', 'noopener,noreferrer');
-                })
-            }
-        }).addTo(map);
+                });
+        }
 
-        console.log("Layer bounds:", stations.getBounds());
+    }).addTo(map);
 
-        map.fitBounds(stations.getBounds());
-    })
-    .catch(error => {
-        console.error("GeoJSON loading error:", error);
-    });
+    map.fitBounds(stations.getBounds());
+
+})
+.catch(error => {
+    console.error("Error loading map:", error);
+});
     </script>
 </body>
 </html>

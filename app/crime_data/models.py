@@ -12,7 +12,7 @@ class Region_Reviews(models.Model):
     )
     name = models.CharField(max_length=50) #reference to name of the region
     review = models.CharField(max_length=2048)
-    rating = models.IntegerField()
+    rating = models.FloatField()
 
     def __str__(self):
         return self.name
@@ -28,3 +28,7 @@ class Region_data(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.month} {self.year}"
+    
+    
+#could make a new table that holds the average rating for each region, each new entry in
+#the region_reviews would update that table
