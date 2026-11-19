@@ -1,24 +1,150 @@
-{% extends "crime_data/home.html" %}
-{% block body %}
-    <table>
-        <thead>
-            <tr>{{region}}</tr>
-            <tr>
-                <th>Month</th>
-                <th>Year</th>
-                <th>FIRs</th>
-            </tr>
-        </thead>
-        <tbody>
-             {% for f in data %}
-             <tr>
-                <td>{{f.month}}</td>
-                <td>{{f.year}}</td>
-                <td>{{f.firs}}</td>
-             </tr>
-             {% endfor %}
-        </tbody>
-    </table>
-   
+{% extends "app/base.html" %}
 
+{% block content %}
+<div class="min-h-screen bg-gray-50 px-4 py-8 sm:px-8">
+
+    <div class="max-w-6xl mx-auto">
+
+        <!-- Header -->
+        <div class="mb-8">
+            <p class="text-sm font-medium text-indigo-600 uppercase tracking-wider">
+                Safety & Trust Map
+            </p>
+
+            <h1 class="text-3xl font-bold text-gray-900 mt-2">
+                {{ region }}
+            </h1>
+
+            <p class="text-gray-500 mt-2">
+                Historical crime statistics for this region
+            </p>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
+
+            <!-- Records Card -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                <p class="text-sm text-gray-500 font-medium">
+                    Total Records
+                </p>
+
+                <h2 class="text-3xl font-bold text-gray-900 mt-2">
+                    {{ data|length }}
+                </h2>
+
+                <p class="text-sm text-gray-400 mt-1">
+                    Monthly crime-data entries
+                </p>
+            </div>
+
+            <!-- Total FIRs Card (optional) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                <p class="text-sm text-gray-500 font-medium">
+                    Total FIRs
+                </p>
+
+                <h2 class="text-3xl font-bold text-indigo-600 mt-2">
+                    {% if total_firs != None %}
+                        {{ total_firs }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </h2>
+
+                <p class="text-sm text-gray-400 mt-1">
+                    Across the available records
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Crime Data Table -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+
+            <div class="px-6 py-5 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900">
+                        Crime Statistics
+                    </h2>
+
+                    <p class="text-sm text-gray-500 mt-1">
+                        Monthly breakdown of reported FIRs
+                    </p>
+                </div>
+
+                <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                    {{ data|length }} entries
+                </span>
+            </div>
+
+            {% if data %}
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+
+                        <thead class="bg-gray-50 text-gray-600 uppercase text-xs tracking-wider">
+                            <tr>
+                                <th class="px-6 py-4 font-semibold">Month</th>
+                                <th class="px-6 py-4 font-semibold">Year</th>
+                                <th class="px-6 py-4 font-semibold text-right">FIRs</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="divide-y divide-gray-100">
+
+                            {% for f in data %}
+                            <tr class="hover:bg-indigo-50/50 transition duration-150">
+
+                                <td class="px-6 py-4 font-medium text-gray-800">
+                                    {{ f.month }}
+                                </td>
+
+                                <td class="px-6 py-4 text-gray-600">
+                                    {{ f.year }}
+                                </td>
+
+                                <td class="px-6 py-4 text-right">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-lg bg-indigo-50 text-indigo-700 font-semibold">
+                                        {{ f.firs }}
+                                    </span>
+                                </td>
+
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+
+            {% else %}
+
+                <!-- Empty State -->
+                <div class="px-6 py-16 text-center">
+
+                    <div class="text-4xl mb-4">
+                        📊
+                    </div>
+
+                    <h3 class="text-lg font-semibold text-gray-800">
+                        No crime data found
+                    </h3>
+
+                    <p class="text-gray-500 mt-2">
+                        No historical records are available for {{ region }}.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+        <!-- Footer Note -->
+        <p class="text-xs text-gray-400 mt-4 text-center">
+            Historical records are provided for informational purposes.
+            They do not necessarily represent current safety conditions.
+        </p>
+
+    </div>
+</div>
 {% endblock %}

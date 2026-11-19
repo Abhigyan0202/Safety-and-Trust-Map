@@ -1,43 +1,99 @@
-from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .forms import RegionReviewForm
+from .models import Region_Reviews
 from django.http import HttpResponse
+from django.db.models import Sum
 from .models import Region_data, Region_Reviews
+
 
 def home(request):
     return HttpResponse("Welcome to Safety and Trust Map!")
 
 def fetch_region(request):
-    region = str(request.GET.get('name','POWAI')).upper()
-    fir_data = Region_data.objects.filter(name=region)
-    print(region)
-    print("----------------------------")
-    print(fir_data)
-    return render(request,"crime_data/fetch_region.html", {
-        "data": fir_data,
-        "region": region
-    })
+    region = request.GET.get("name", "POWAI").strip().upper()
 
-from django.shortcuts import render
-from .models import Region_data
-
-def map_view(request):
-    regions = list(
-        Region_data.objects
-        .filter(
-            latitude__isnull=False,
-            longitude__isnull=False,
-        )
-        .values(
-            "name",
-            "latitude",
-            "longitude",
-            "firs",
-            "month",
-            "year",
-        )
+    fir_data = Region_data.objects.filter(
+        name__iexact=region
     )
+
+    reviews = Region_Reviews.objects.filter(
+        police_station__name__iexact=region
+    ).select_related("user", "police_station")
+
+    total_firs = fir_data.aggregate(total=Sum("firs"))["total"] or 0
+    
+    return render(
+        request,
+        "crime_data/fetch_region.html",
+        {
+            "data": fir_data,
+            "reviews": reviews,
+            "region": region,
+            "total_firs": total_firs,
+        }
+    )
+
+@login_required
+def add_review(request):
+    if request.method == "POST":
+        form = RegionReviewForm(request.POST)
+
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.user = request.user
+            review.save()
+
+            messages.success(request, "Review added successfully!")
+            return redirect("profile")
+
+    else:
+        form = RegionReviewForm()
 
     return render(
         request,
-        "crime_data/map.html",
-        {"regions": regions},
+        "crime_data/add_review.html",
+        {"form": form},
+    )
+
+
+def search_place_reviews(request):
+    query = request.GET.get("q", "").strip()
+
+    reviews = Region_Reviews.objects.none()
+
+    if query:
+        reviews = (
+            Region_Reviews.objects
+            .filter(place_name__icontains=query)
+            .select_related("user")
+        )
+
+    return render(
+        request,
+        "crime_data/place_reviews.html",
+        {"reviews": reviews, "query": query},
+    )
+
+
+def user_reviews(request, username):
+    from django.contrib.auth.models import User
+
+    profile_user = get_object_or_404(
+        User,
+        username=username,
+    )
+
+    reviews = profile_user.region_reviews.all()
+    total_reviews = reviews.count()
+
+    return render(
+        request,
+        "crime_data/user_reviews.html",
+        {
+            "profile_user": profile_user,
+            "reviews": reviews,
+            "total_reviews": total_reviews,
+        },
     )
