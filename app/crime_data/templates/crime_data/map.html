@@ -93,7 +93,7 @@
     fetch('/static/crime_data/mumbai_police_station_jurisdictions_matched.geojson')
         .then(response => response.json()),
 
-    fetch('/getColours')
+    fetch('/crime/getColours')
         .then(response => response.json())
 ])
 .then(([geojsonData, colours]) => {
@@ -116,9 +116,9 @@
             layer.bindTooltip(regionName);
 
             layer.on('click', (feature, layer)=> {
-                    console.log(regionName);
-                    window.open(`/fetch_region?name=${encodeURIComponent(regionName)}`, '_blank', 'noopener,noreferrer');
-                });
+            console.log(regionName);
+            window.open(`/crime/reviews/search/?q=${encodeURIComponent(regionName)}`, '_blank', 'noopener,noreferrer');
+});
         }
 
     }).addTo(map);

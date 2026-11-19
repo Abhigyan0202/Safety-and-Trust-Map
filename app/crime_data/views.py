@@ -115,17 +115,17 @@ def getColours(request):
     ratings = {}
 
     colours = [
-        "#FF0000",
-        "#FF3300",
-        "#FF6600",
-        "#FF9900",
-        "#FFCC00",
-        "#FFFF00",
-        "#CCFF00",
-        "#99FF00",
-        "#65FF00",
-        "#32FF00",
-        "#00FF00",
+        "#FF0000",  # 0 - Red
+        "#FF3300",  # 1
+        "#FF6600",  # 2
+        "#FF9900",  # 3
+        "#FFCC00",  # 4
+        "#FFFF00",  # 5
+        "#CCFF00",  # 6
+        "#99FF00",  # 7
+        "#65FF00",  # 8
+        "#32FF00",  # 9
+        "#00FF00",  # 10 - Green
     ]
 
     for region in substations:
@@ -136,11 +136,13 @@ def getColours(request):
         )["average"]
 
         if avg_rating is None:
-            index = 0
-        else:
-            index = math.ceil(avg_rating * 2)
+            ratings[region] = "#cccccc"  # No reviews = gray
+            continue
 
-        index = max(0, min(index, len(colours) - 1))
+        # Convert rating from 1–5 into color index 0–10
+        index = round((avg_rating - 1) * 2)
+
+        index = max(0, min(index, 10))
 
         ratings[region] = colours[index]
 
