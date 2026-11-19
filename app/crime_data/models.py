@@ -38,13 +38,6 @@ class Region_Reviews(models.Model):
         return f"{self.police_station.name} - {self.user.username}"
 
 class Region_data(models.Model):
-    region_review = models.ForeignKey(
-        Region_Reviews,
-        on_delete=models.CASCADE,
-        related_name="region_data",
-        null=True,
-        blank=True
-    )
     name = models.CharField(max_length=50)
     firs = models.IntegerField()
     month = models.CharField(max_length=20)
@@ -54,3 +47,7 @@ class Region_data(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.month} {self.year}"
+    
+    
+#could make a new table that holds the average rating for each region, each new entry in
+#the region_reviews would update that table

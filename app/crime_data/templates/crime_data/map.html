@@ -47,20 +47,7 @@
             width: 100%;
         }
 
-        .popup-title {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 6px;
-        }
-
-        .popup-info {
-            margin: 0 0 8px;
-        }
-
-        .popup-hint {
-            color: #2563eb;
-            font-size: 12px;
-        }
+        
     </style>
 </head>
 
@@ -78,6 +65,8 @@
     {{ regions|json_script:"regions-data" }}
 
     <script>
+        L.TileLayer.prototype.options.referrerPolicy = 'strict-origin-when-cross-origin';
+
         const map = L.map("map").setView(
             [19.0760, 72.8777],
             11
@@ -92,68 +81,54 @@
                     'OpenStreetMap</a> contributors'
             }
         ).addTo(map);
+        const geojsonUrl =
+    '/static/crime_data/mumbai_police_station_jurisdictions_matched.geojson';
+    const coloursURL = "/getColours"
 
-        const regions = JSON.parse(
-            document.getElementById("regions-data").textContent
-        );
+    const getRegionColour = async (region_name) => {
+        return "#ff3300";
+    }
 
-        const bounds = [];
+    Promise.all([
+    fetch('/static/crime_data/mumbai_police_station_jurisdictions_matched.geojson')
+        .then(response => response.json()),
 
-        regions.forEach(region => {
-            const latitude = Number(region.latitude);
-            const longitude = Number(region.longitude);
+    fetch('/getColours')
+        .then(response => response.json())
+])
+.then(([geojsonData, colours]) => {
+    console.log(colours)
+    const stations = L.geoJSON(geojsonData, {
+        style: function(feature) {
+            const regionName = feature.properties.name;
+            return {
+                color: '#333333',
+                weight: 1,
+                fillColor: colours[regionName] || '#cccccc',
+                fillOpacity: 0.65
+            };
+        },
 
-            if (
-                !Number.isFinite(latitude) ||
-                !Number.isFinite(longitude) ||
-                latitude < -90 || latitude > 90 ||
-                longitude < -180 || longitude > 180
-            ) {
-                return;
-            }
+        onEachFeature: function(feature, layer) {
 
-            const marker = L.marker([
-                latitude,
-                longitude
-            ]).addTo(map);
+            const regionName = feature.properties.name;
 
-            bounds.push([latitude, longitude]);
+            layer.bindTooltip(regionName);
 
-            // Build popup safely
-            const popup = document.createElement("div");
-
-            const title = document.createElement("div");
-            title.className = "popup-title";
-            title.textContent = region.name;
-            popup.appendChild(title);
-
-            const details = document.createElement("p");
-            details.className = "popup-info";
-            details.textContent =
-                `${region.firs} FIRs — ${region.month} ${region.year}`;
-            popup.appendChild(details);
-
-            const hint = document.createElement("div");
-            hint.className = "popup-hint";
-            hint.textContent = "Click marker to view area details";
-            popup.appendChild(hint);
-
-            marker.bindPopup(popup);
-
-            marker.on("click", () => {
-                window.location.href =
-                    `/fetch_region`;
-            });
-        });
-
-        if (bounds.length > 1) {
-            map.fitBounds(bounds, {
-                padding: [30, 30],
-                maxZoom: 13
-            });
-        } else if (bounds.length === 1) {
-            map.setView(bounds[0], 14);
+            layer.on('click', (feature, layer)=> {
+                    console.log(regionName);
+                    window.open(`/fetch_region?name=${encodeURIComponent(regionName)}`, '_blank', 'noopener,noreferrer');
+                });
         }
+
+    }).addTo(map);
+
+    map.fitBounds(stations.getBounds());
+
+})
+.catch(error => {
+    console.error("Error loading map:", error);
+});
     </script>
 </body>
 </html>

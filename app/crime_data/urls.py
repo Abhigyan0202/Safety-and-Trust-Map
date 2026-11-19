@@ -11,4 +11,6 @@ urlpatterns = [
          views.user_reviews,
          name="user_reviews",
     ),
+    path("map/", views.map_view, name="map"),
+    path("getColours/", views.getColours, name="getColours"),
 ]

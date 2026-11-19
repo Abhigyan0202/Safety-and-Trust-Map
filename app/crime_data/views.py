@@ -1,15 +1,20 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.http import HttpResponse, JsonResponse
+from django.db.models import Sum, Avg
+from django.contrib.auth.models import User
+
 from .forms import RegionReviewForm
-from .models import Region_Reviews
-from django.http import HttpResponse
-from django.db.models import Sum
 from .models import Region_data, Region_Reviews
+from .subs import get_substations
+
+import math
 
 
 def home(request):
     return HttpResponse("Welcome to Safety and Trust Map!")
+
 
 def fetch_region(request):
     region = request.GET.get("name", "POWAI").strip().upper()
@@ -22,8 +27,10 @@ def fetch_region(request):
         police_station__name__iexact=region
     ).select_related("user", "police_station")
 
-    total_firs = fir_data.aggregate(total=Sum("firs"))["total"] or 0
-    
+    total_firs = fir_data.aggregate(
+        total=Sum("firs")
+    )["total"] or 0
+
     return render(
         request,
         "crime_data/fetch_region.html",
@@ -34,6 +41,7 @@ def fetch_region(request):
             "total_firs": total_firs,
         }
     )
+
 
 @login_required
 def add_review(request):
@@ -66,20 +74,21 @@ def search_place_reviews(request):
     if query:
         reviews = (
             Region_Reviews.objects
-            .filter(place_name__icontains=query)
-            .select_related("user")
+            .filter(police_station__name__icontains=query)
+            .select_related("user", "police_station")
         )
 
     return render(
         request,
         "crime_data/place_reviews.html",
-        {"reviews": reviews, "query": query},
+        {
+            "reviews": reviews,
+            "query": query,
+        },
     )
 
 
 def user_reviews(request, username):
-    from django.contrib.auth.models import User
-
     profile_user = get_object_or_404(
         User,
         username=username,
@@ -96,4 +105,65 @@ def user_reviews(request, username):
             "reviews": reviews,
             "total_reviews": total_reviews,
         },
+    )
+
+
+# MAP FUNCTIONALITY FROM BRANCH2
+
+def getColours(request):
+    substations = get_substations()
+    ratings = {}
+
+    colours = [
+        "#FF0000",
+        "#FF3300",
+        "#FF6600",
+        "#FF9900",
+        "#FFCC00",
+        "#FFFF00",
+        "#CCFF00",
+        "#99FF00",
+        "#65FF00",
+        "#32FF00",
+        "#00FF00",
+    ]
+
+    for region in substations:
+        avg_rating = Region_Reviews.objects.filter(
+            police_station__name__iexact=region
+        ).aggregate(
+            average=Avg("rating")
+        )["average"]
+
+        if avg_rating is None:
+            index = 0
+        else:
+            index = math.ceil(avg_rating * 2)
+
+        index = max(0, min(index, len(colours) - 1))
+
+        ratings[region] = colours[index]
+
+    return JsonResponse(ratings)
+
+
+def map_view(request):
+    regions = list(
+        Region_data.objects.filter(
+            latitude__isnull=False,
+            longitude__isnull=False,
+        ).values(
+            "name",
+            "latitude",
+            "longitude",
+            "firs",
+            "month",
+            "year",
+        )
+    )
+
+    return render(
+        request,
+        "crime_data/map.html",
+        {"regions": regions},
     )
