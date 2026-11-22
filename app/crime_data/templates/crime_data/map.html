@@ -104,7 +104,7 @@
             return {
                 color: '#333333',
                 weight: 1,
-                fillColor: colours[regionName] || '#cccccc',
+                fillColor: colours[regionName][0] || '#cccccc',
                 fillOpacity: 0.65
             };
         },
@@ -113,7 +113,7 @@
 
             const regionName = feature.properties.name;
 
-            layer.bindTooltip(regionName);
+            layer.bindTooltip(regionName + ` <br>AVG Rating - ${colours[regionName][1]}`);
 
             layer.on('click', (feature, layer)=> {
             console.log(regionName);

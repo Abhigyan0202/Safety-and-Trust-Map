@@ -136,7 +136,7 @@ def getColours(request):
         )["average"]
 
         if avg_rating is None:
-            ratings[region] = "#cccccc"  # No reviews = gray
+            ratings[region] = ["#cccccc", "NULL"]  # No reviews = gray
             continue
 
         # Convert rating from 1–5 into color index 0–10
@@ -144,7 +144,7 @@ def getColours(request):
 
         index = max(0, min(index, 10))
 
-        ratings[region] = colours[index]
+        ratings[region] = [colours[index], str(avg_rating)]
 
     return JsonResponse(ratings)
 
