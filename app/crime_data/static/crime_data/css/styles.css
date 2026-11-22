@@ -1,67 +1,82 @@
 * {
-            box-sizing: border-box;
-        }
+    box-sizing: border-box;
+}
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
-        }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+}
 
-        header {
-            padding: 18px 24px;
-            background: #172554;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-        }
+header {
+    padding: 18px 24px;
+    background: #172554;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+}
 
-        header h1 {
-            margin: 0 0 6px;
-            font-size: 24px;
-        }
+header h1 {
+    margin: 0 0 6px;
+    font-size: 24px;
+}
 
-        header p {
-            margin: 0;
-            color: #dbeafe;
-            font-size: 14px;
-        }
+header p {
+    margin: 0;
+    color: #dbeafe;
+    font-size: 14px;
+}
 
-        #map {
-            height: calc(100vh - 90px);
-            min-height: 400px;
-            width: 100%;
-        }
-        .search-container {
-            position: relative;
-            width: 300px;
-        }
+#map {
+    height: calc(100vh - 90px);
+    min-height: 400px;
+    width: 100%;
+}
+.search-container {
+    position: relative;
+    width: 300px;
+}
 
-        #search {
-            width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-        }
+#search {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+}
 
-        .dropdown {
-            position: absolute;
-            width: 100%;
-            background: white;
-            border: 1px solid #ccc;
-            max-height: 200px;
-            overflow-y: auto;
-            display: none;
-            z-index: 1000;
-        }
+.dropdown {
+    position: absolute;
+    width: 100%;
+    background: white;
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+    z-index: 1000;
+}
 
-        .dropdown-item {
-            padding: 10px;
-            cursor: pointer;
-            background-color: white;
-            color: black;
-        }
+.dropdown-item {
+    padding: 10px;
+    cursor: pointer;
+    background-color: white;
+    color: black;
+}
 
-        .dropdown-item:hover {
-            background-color: black;
-            color: white;
-        }
+.dropdown-item:hover {
+    background-color: black;
+    color: white;
+}
+
+
+
+#id_police_station {
+    background-color: #368387;
+    color: white;
+}
+#id_rating {
+    background-color: #ba534d;
+    color: white;
+}
+
+#id_police_station option:focus {
+    color: black;
+}

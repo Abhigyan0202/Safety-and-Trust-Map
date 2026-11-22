@@ -30,3 +30,7 @@ class RegionReviewForm(forms.ModelForm):
                 "class": "w-full rounded-xl border border-slate-300 bg-white px-4 py-4 text-slate-700 shadow-sm outline-none resize-y focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
             }),
         }
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["police_station"].required = True
