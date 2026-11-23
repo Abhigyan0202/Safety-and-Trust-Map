@@ -190,8 +190,7 @@ def getColours(request):
 
         index = max(0, min(index, 10))
 
-        ratings[region] = [colours[index], str(avg_rating)]
-
+        ratings[region] = [colours[index], str(round(avg_rating,2))]
     return JsonResponse(ratings)
 
 
