@@ -31,6 +31,48 @@ def fetch_region(request):
         total=Sum("firs")
     )["total"] or 0
 
+    region_avg_firs = fir_data.aggregate(
+        average=Avg("firs")
+    )["average"] or 0
+
+    mumbai_avg_firs = Region_data.objects.aggregate(
+        average=Avg("firs")
+    )["average"] or 0
+
+    month_order = {
+        "January": 1,
+        "February": 2,
+        "March": 3,
+        "April": 4,
+        "May": 5,
+        "June": 6,
+        "July": 7,
+        "August": 8,
+        "September": 9,
+        "October": 10,
+        "November": 11,
+        "December": 12,
+    }
+
+    monthly_rows = (
+        fir_data
+        .values("month", "year")
+        .annotate(firs=Sum("firs"))
+    )
+    monthly_rows = sorted(
+        monthly_rows,
+        key=lambda row: (
+            row["year"],
+            month_order.get(row["month"].title(), 99),
+        ),
+    )
+
+    line_chart_labels = [
+        f'{row["month"]} {row["year"]}'
+        for row in monthly_rows
+    ]
+    line_chart_firs = [row["firs"] for row in monthly_rows]
+
     return render(
         request,
         "crime_data/fetch_region.html",
@@ -39,6 +81,10 @@ def fetch_region(request):
             "reviews": reviews,
             "region": region,
             "total_firs": total_firs,
+            "region_avg_firs": round(region_avg_firs, 1),
+            "mumbai_avg_firs": round(mumbai_avg_firs, 1),
+            "line_chart_labels": line_chart_labels,
+            "line_chart_firs": line_chart_firs,
         }
     )
 
