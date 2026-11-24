@@ -12254,9 +12254,6 @@
   .max-w-md {
     max-width: var(--container-md);
   }
-  .min-w-0 {
-    min-width: 0px;
-  }
   .flex-1 {
     flex: 1;
   }
@@ -15748,9 +15745,6 @@
       --aura-radius: var(--radius-selector);
     }
   }
-  .placeholder\:text-slate-400::placeholder {
-    color: var(--color-slate-400);
-  }
   @media (hover: hover) {
     .hover\:bg-blue-700:hover {
       background-color: var(--color-blue-700);
@@ -15797,9 +15791,6 @@
   .focus\:border-indigo-500:focus {
     border-color: var(--color-indigo-500);
   }
-  .focus\:border-slate-500:focus {
-    border-color: var(--color-slate-500);
-  }
   .focus\:ring-2:focus {
     --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
@@ -15812,9 +15803,6 @@
   }
   .focus\:ring-red-500:focus {
     --tw-ring-color: var(--color-red-500);
-  }
-  .focus\:ring-slate-200:focus {
-    --tw-ring-color: var(--color-slate-200);
   }
   .focus\:ring-offset-2:focus {
     --tw-ring-offset-width: 2px;
@@ -15872,6 +15860,9 @@
     }
   }
   @media (width >= 64rem) {
+    .lg\:grid-cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
     .lg\:px-8 {
       padding-inline: calc(var(--spacing) * 8);
     }

@@ -154,24 +154,23 @@ def user_reviews(request, username):
     )
 
 
-# MAP FUNCTIONALITY FROM BRANCH2
 
 def getColours(request):
     substations = get_substations()
     ratings = {}
 
     colours = [
-        "#FF0000",  # 0 - Red
-        "#FF3300",  # 1
-        "#FF6600",  # 2
-        "#FF9900",  # 3
-        "#FFCC00",  # 4
-        "#FFFF00",  # 5
-        "#CCFF00",  # 6
-        "#99FF00",  # 7
-        "#65FF00",  # 8
-        "#32FF00",  # 9
-        "#00FF00",  # 10 - Green
+        "#FF0000",  
+        "#FF3300",  
+        "#FF6600",  
+        "#FF9900",  
+        "#FFCC00",  
+        "#FFFF00",  
+        "#CCFF00",  
+        "#99FF00",  
+        "#65FF00",  
+        "#32FF00",  
+        "#00FF00",  
     ]
 
     for region in substations:
@@ -182,7 +181,7 @@ def getColours(request):
         )["average"]
 
         if avg_rating is None:
-            ratings[region] = ["#cccccc", "NULL"]  # No reviews = gray
+            ratings[region] = ["#cccccc", "NULL"] 
             continue
 
         # Convert rating from 1–5 into color index 0–10
